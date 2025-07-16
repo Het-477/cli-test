@@ -1,27 +1,32 @@
 #!/usr/bin/env node
 
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-
-const argv = yargs(hideBin(process.argv))
-    .option("pokemon", {
-        type: "string",
-        demandOption: true,
-        describe: "Name of the Pokémon to fetch moves for"
-    })
-    .help()
-    .argv;
+import inquirer from "inquirer";
 
 const printFiveMoves = async (pokemonName) => {
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`);
         if (!response.ok) throw new Error("Pokémon not found!");
+
         const pokemon = await response.json();
         const moves = pokemon.moves.map(({ move }) => move.name);
-        console.log(moves.slice(0, 5));
+
+        console.log(`\nTop 5 moves for ${pokemonName}:\n`);
+        console.log(moves.slice(0, 5).join("\n"));
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("\nError:", error.message);
     }
 };
 
-printFiveMoves(argv.pokemon);
+const main = async () => {
+    const answers = await inquirer.prompt([
+        {
+            type: "input",
+            name: "pokemon",
+            message: "Enter the name of a Pokémon to see its top 5 moves:",
+        },
+    ]);
+
+    await printFiveMoves(answers.pokemon);
+};
+
+main();
