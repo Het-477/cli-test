@@ -7,16 +7,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
   "bin": {
     "cli-test": "index.js"
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "yargs": "^18.0.0"
   }
 }

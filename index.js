@@ -1,25 +1,27 @@
-#!/usr/bin/env node 
+#!/usr/bin/env node
 
-console.log("my custom cli")
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+const argv = yargs(hideBin(process.argv))
+    .option("pokemon", {
+        type: "string",
+        demandOption: true,
+        describe: "Name of the Pokémon to fetch moves for"
+    })
+    .help()
+    .argv;
 
 const printFiveMoves = async (pokemonName) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-    const pokemon = await response.json();
-    const moves = pokemon.moves.map(({ move }) => move.name);
-
-    console.log(moves.slice(0, 5));
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+        if (!response.ok) throw new Error("Pokémon not found!");
+        const pokemon = await response.json();
+        const moves = pokemon.moves.map(({ move }) => move.name);
+        console.log(moves.slice(0, 5));
+    } catch (error) {
+        console.error("Error:", error.message);
+    }
 };
 
-printFiveMoves("chikorita");
-
-
-
-
-
-// import * as p from '@clack/prompts';
-// import color from 'picocolors';
-// import { setTimeout } from 'timers/promises';
-
-// async function main() {
-//     p.intro(`${color.bgRed(color.black(`Welcome to the ${color.bold(`Nizzy Games`)} 🚀🚀🚀`))}`);
-// }
+printFiveMoves(argv.pokemon);
